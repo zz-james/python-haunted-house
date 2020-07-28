@@ -35,7 +35,8 @@ flag = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 verbs = ['help', 'carrying', 'go', 'n', 's', 'w', 'e', 'u', 'd', 'get', 'take', 'open', 'examine',
          'read', 'say', 'dig', 'swing', 'climb', 'light', 'unlight', 'spray', 'use', 'unlock', 'leave', 'score']  # verbs
 
-carrying = []
+carrying = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 listOfGettables = [46, 38, 35, 50, 13, 18, 28, 42, 10, 25, 26,
                    4, 2, 7, 47, 60, 43, 32]  # list of the room numbers of the 18 gettables
@@ -51,152 +52,6 @@ LL = 60  # candle time left
 
 room = 57
 message = "ok"
-
-while True:
-    print('Haunted House')
-    print('-------------')
-    print('your location')
-    print(description[room])
-    print('exits:')
-
-    for i in range(len(rooms[room])):
-        print(rooms[room][i]+',')
-
-    for i in range(numberOfGettables):
-        if((objects[i] == room) and (flag[i] == 0)):
-            print('you can see: ')
-            print(objects[i])
-            print('here')
-
-    print('-------------')
-
-    print(message)
-    message = 'what'
-
-    query = input('what will you do now?')
-
-    # parse input string
-    verb = ''  # clear verb
-    _object = ''  # clear noun
-    verbPosition = 0  # position in verb list
-    objectPosition = 0  # position in objects list
-
-# spilt q by space
-    verb, _object = query.split()
-
-    if(_object == ""):
-        verb = query
-
-    # find
-    for i in range(numberOfVerbs):
-        if(verb == verbs[i]):
-            verbPosition = i
-
-    for i in range(numberOfNouns):
-        if(_object == objects[i]):
-            objectPosition = i
-
-    # errors in input (validation)
-
-    # there is a second word but it is not found in the list
-    if(_object != '' and objectPosition == 0):
-        message = "that's silly"
-
-    # no second word
-    if(_object == ''):
-        message = "I need two words"
-
-    # doesnt have verb but does have _object
-    if(verbPosition == 0 and objectPosition > 0):
-        message = "you can't " + query
-
-    # doesn't have either words
-    if(verbPosition == 0 and objectPosition == 0):
-        message = "you don't make sense"
-
-    # it has verb and _object but is not carrying _object
-    if(verbPosition > 0 and objectPosition > 0 and carrying[objectPosition] == 0):
-        message = "you don't have " + _object
-
-    # SPECIAL FLAGGED CONDITIONS
-
-    if(flag[26] == 1 and room == 13 and (random.randint(1, 4) != 3) and verbPosition != 21):
-        message = "bat's attacking"
-        batsAttacking()
-
-    # cobwebbt room, vacuum cleaner off, set ghosts to 1
-    if(room == 44 and random.randint(1, 2) == 1 and flag[24] != 1):
-        flag[27] = 1
-
-    # candle is lit, decrement light limit
-    if(flag[0] == 1):
-        LL = LL - 1
-
-    # if light limit is zero or less turn off candle
-    if(LL < 1):
-        flag[0] = 0
-
-    # branch according to verbs
-
-    if verbPosition == 1:
-        wordsIKnow()  # 500
-    if verbPosition == 2:
-        inventory()  # 570
-    if verbPosition == 3:
-        go()  # 640
-    if verbPosition == 4:
-        go()  # 640
-    if verbPosition == 5:
-        go()  # 640
-    if verbPosition == 6:
-        go()  # 640
-    if verbPosition == 7:
-        go()  # 640
-    if verbPosition == 8:
-        go()  # 640
-    if verbPosition == 9:
-        go()  # 640
-    if verbPosition == 10:
-        get()  # 980
-    if verbPosition == 11:
-        get()  # 980 (take)
-    if verbPosition == 12:
-        open()  # 1030 ?
-    if verbPosition == 13:
-        examine()  # 1070
-    if verbPosition == 14:
-        read()  # 1140
-    if verbPosition == 15:
-        say()  # 1180
-    if verbPosition == 16:
-        dig()  # 1220
-    if verbPosition == 17:
-        swing()  # 1250
-    if verbPosition == 18:
-        climb()  # 1300
-    if verbPosition == 19:
-        light()  # 1340
-    if verbPosition == 20:
-        unlight()  # 1380
-    if verbPosition == 21:
-        spray()  # 1400
-    if verbPosition == 22:
-        use()  # 1430
-    if verbPosition == 23:
-        unlock()  # 1460
-    if verbPosition == 24:
-        leave()  # 1490
-    if verbPosition == 25:
-        score()  # 1510
-    if verbPosition == 26:
-        pass  # 1590
-
-    if(LL == 10):
-        message = "You're candle is waning"
-
-    if(LL == 1):
-        message = "You're candle is out"
-# start again goto 90
 
 
 def wordsIKnow():
@@ -224,7 +79,7 @@ def go():
     direction = 0  # [n, s, w, e, u, d]
     if(objectPosition == 0):
         # north, south, west, east, up, down are verbposition 4, 5, 6, 7, 8, 9
-        direction = verbPosition-3
+        direction = verbPosition-2
     if(objectPosition == 19):  # north
         direction = 1
     if(objectPosition == 20):  # south
@@ -278,7 +133,7 @@ def go():
         message = "you can't carry a boat"
         return
 
-    if((room > 26 or room < 30) and flag[0] == 0):
+    if((room > 26 and room < 30) and flag[0] == 0):
         message = "too dark to move"
         return
 
@@ -292,18 +147,22 @@ def go():
         if(u == "N" and direction == 1 and flag[35] == 0):
             room = room - 8
             flag[35] = 1
+            break
 
         if(u == "S" and direction == 2 and flag[35] == 0):
             room = room + 8
             flag[35] = 1
+            break
 
         if(u == "W" and direction == 3 and flag[35] == 0):
             room = room - 1
             flag[35] = 1
+            break
 
         if(u == "E" and direction == 4 and flag[35] == 0):
             room = room + 1
             flag[35] = 1
+            break
 
     message = "ok"
 
@@ -315,7 +174,7 @@ def go():
 
     if(room == 41 and flag[23] == 1):  # lobby front door open
         rooms[49] = "SW"
-        message = "the doow slams shut"
+        message = "the door slams shut"
         flag[23] = 0  # front door shut
 # this is the end of the go function.
 
@@ -513,3 +372,155 @@ def inputASpace():  # 1580
 def batsAttacking():
     global gameOver
     gameOver = True
+
+
+while True:
+    print('\n')
+    print('Haunted House')
+    print('-------------')
+    print('your location:')
+    print(description[room])
+    print('\n')
+    print('exits:')
+
+    for i in range(len(rooms[room])):
+        print(rooms[room][i]+',')
+
+    for i in range(numberOfGettables):
+        if((objects[i] == room) and (flag[i] == 0)):
+            print('you can see: ')
+            print(objects[i])
+            print('here')
+
+    print('-------------')
+
+    print(message)
+    message = 'what'
+    print('\n')
+    query = input('what will you do now?')
+    print('\n')
+    # parse input string
+    verb = ''  # clear verb
+    _object = ''  # clear noun
+    verbPosition = 0  # position in verb list
+    objectPosition = 0  # position in objects list
+
+# spilt q by space
+    if len(query.split()) > 1:
+        verb, _object = query.split()
+    else:
+        verb = query
+
+    # if(_object == ""):
+    #     verb = query
+
+    # find
+    for i in range(numberOfVerbs):
+        if(verb == verbs[i]):
+            verbPosition = i
+
+    for i in range(numberOfNouns):
+        if(_object == objects[i]):
+            objectPosition = i
+
+    # errors in input (validation)
+
+    # there is a second word but it is not found in the list
+    if(_object != '' and objectPosition == 0):
+        message = "that's silly"
+
+    # no second word
+    if(_object == ''):
+        message = "I need two words"
+
+    # doesnt have verb but does have _object
+    if(verbPosition == 0 and objectPosition > 0):
+        message = "you can't " + query
+
+    # doesn't have either words
+    if(verbPosition == 0 and objectPosition == 0):
+        message = "you don't make sense"
+
+    # it has verb and _object but is not carrying _object
+    if(verbPosition > 0 and objectPosition > 0 and carrying[objectPosition] == 0):
+        message = "you don't have " + _object
+
+    # SPECIAL FLAGGED CONDITIONS
+
+    if(flag[26] == 1 and room == 13 and (random.randint(1, 4) != 3) and verbPosition != 21):
+        message = "bat's attacking"
+        batsAttacking()
+
+    # cobwebbt room, vacuum cleaner off, set ghosts to 1
+    if(room == 44 and random.randint(1, 2) == 1 and flag[24] != 1):
+        flag[27] = 1
+
+    # candle is lit, decrement light limit
+    if(flag[0] == 1):
+        LL = LL - 1
+
+    # if light limit is zero or less turn off candle
+    if(LL < 1):
+        flag[0] = 0
+
+    # branch according to verbs
+
+    if verbPosition == 1:
+        wordsIKnow()  # 500
+    if verbPosition == 2:
+        inventory()  # 570
+    if verbPosition == 3:
+        go()  # 640
+    if verbPosition == 4:
+        go()  # 640
+    if verbPosition == 5:
+        go()  # 640
+    if verbPosition == 6:
+        go()  # 640
+    if verbPosition == 7:
+        go()  # 640
+    if verbPosition == 8:
+        go()  # 640
+    if verbPosition == 9:
+        go()  # 640
+    if verbPosition == 10:
+        get()  # 980
+    if verbPosition == 11:
+        get()  # 980 (take)
+    if verbPosition == 12:
+        open()  # 1030 ?
+    if verbPosition == 13:
+        examine()  # 1070
+    if verbPosition == 14:
+        read()  # 1140
+    if verbPosition == 15:
+        say()  # 1180
+    if verbPosition == 16:
+        dig()  # 1220
+    if verbPosition == 17:
+        swing()  # 1250
+    if verbPosition == 18:
+        climb()  # 1300
+    if verbPosition == 19:
+        light()  # 1340
+    if verbPosition == 20:
+        unlight()  # 1380
+    if verbPosition == 21:
+        spray()  # 1400
+    if verbPosition == 22:
+        use()  # 1430
+    if verbPosition == 23:
+        unlock()  # 1460
+    if verbPosition == 24:
+        leave()  # 1490
+    if verbPosition == 25:
+        score()  # 1510
+    if verbPosition == 26:
+        pass  # 1590
+
+    if(LL == 10):
+        message = "You're candle is waning"
+
+    if(LL == 1):
+        message = "You're candle is out"
+# start again goto 90
